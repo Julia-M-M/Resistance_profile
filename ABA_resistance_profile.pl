@@ -274,43 +274,37 @@ sub resistance_profile_formula {
 		return
 "Error: No antibiotic panel";
 	}
-	if ( $antib_panel_count != 9 ) {
-		
-		if ( $family_count - $RIfam_count <= 2 ) {	#non-susceptible to >=1 agent in all but <=2 categories
-				return "XDR*";
-			}
 	
-			if ( $RIfam_count >= 3 ) {	#MDR: non-susceptible to >=1 agent in >=3 antimicrobial categories.
-				return "MDR*";
-			}
-			if ( $RIfam_count < 3 && $RI_count != 0) {
-				return "not MDR*";
-			}
-			else {
-			return "Error: unclassified*";
-			}
-	}
-	
-	if ( $antib_panel_count == 9 ) {
+	if ( $antib_panel_count != 0 ) {
 
-		if ( $RI_count == $antib_panel_count && $S_count == 0 ) {	#non-susceptible to all antimicrobial agents listed
+		if ( $RI_count == $antib_panel_count && $S_count == 0 ) {	#PDR: non-susceptible to all antimicrobial agents listed
 			return "PDR";
 		}
 
-		if ( $RI_count == 0 && $S_count == $antib_panel_count ) {
+		if ( $RI_count == 0 && $S_count == $antib_panel_count ) {	#S: susceptible to all antimicrobial agents listed
 			return "sensitive";
 		}
 
-		if ( $family_count - $RIfam_count <= 2 ) {	#non-susceptible to >=1 agent in all but <=2 categories
+		if ( $family_count - $RIfam_count <= 2 ) {	#XDR: non-susceptible to >=1 agent in all but <=2 categories
 			return "XDR";
+		}
+		if ( $family_count - $RIfam_count <= 2 ) {
+			return "XDR*";
 		}
 
 		if ( $RIfam_count >= 3 ) {	#MDR: non-susceptible to >=1 agent in >=3 antimicrobial categories.
 			return "MDR";
 		}
+		if ( $RIfam_count >= 3 ) {	
+			return "MDR*";
+		}
 		if ( $RIfam_count < 3 && $RI_count != 0) {
 			return "not MDR";
 		}
+		if ( $RIfam_count < 3 && $RI_count != 0) {
+			return "not MDR*";
+		}
+		
 		else {
 		return "Error: unclassified";
 		}
