@@ -7,10 +7,13 @@ id	amikacin_SIR	gentamicin_SIR	cefotaxime_SIR	cefepime_SIR	levofloxacin_SIR	tetr
 6m	R	S	R	S	R	S	S	S	S
 7m	R		R	S	R	S	S	S	S
 8m*	R	I	R	S	R	S		S	S
-9x	R	S	R	S	R	S	S	S	S
+9m	R	S	R	S	R	S	S	S	S
 10x	R	S	R	S	R	S	I	S	S
 11x	R		R	S	R	S	I	S	S
 12x	R	S	R	S	R	S	I	S	R
 13x	R		R	S	R	S	I	S	R
 14x*	R	I	R	I	R	I	R	I	
 15p	R	I	R	I	R	I	R	I	R
+16E									
+17n	R								
+18n	S								
