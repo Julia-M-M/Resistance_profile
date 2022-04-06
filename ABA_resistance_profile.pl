@@ -184,21 +184,25 @@ sub family_count_formula {
 
 #	my %allowed = map {$_ => 1} ('S' 'I' 'R');
 #	if (($amikacin_SIR eq 'S' or $amikacin_SIR eq 'I' or $amikacin_SIR eq 'R') || ($gentamicin_SIR eq 'S' or $gentamicin_SIR eq 'I' or $gentamicin_SIR eq 'R')){
-	if ( $allowed{$amikacin_SIR} or $allowed{$gentamicin_SIR} ) {
 
 #WRONG	if ( $amikacin_SIR eq ("R" or "I" or "S") || $gentamicin_SIR eq ("R" or "I" or "S") ) {
+	
+	if ( $allowed{$amikacin_SIR} or $allowed{$gentamicin_SIR} ) {	#Aminoglycosides
 		$family_count ++;
 	}
-	if ( $allowed{$cefotaxime_SIR} or $allowed{$cefepime_SIR} ) {
+	if ( $allowed{$cefotaxime_SIR} or $allowed{$cefepime_SIR} ) {	#Extended-spectrum cephalosporins
 		$family_count ++;
 	}
-	if ( $allowed{$levofloxacin_SIR} or $allowed{$tetracycline_SIR} ) {
+	if ( $allowed{$levofloxacin_SIR} ) {	#Antipseudomonal fluoroquinolones
 		$family_count ++;
 	}
-	if ( $allowed{$imipenem_SIR} or $allowed{$meropenem_SIR} ) {
+	if ( $allowed{$tetracycline_SIR} ) {	#Tetracyclines
 		$family_count ++;
 	}
-	if ( $allowed{$colistin_SIR} ) {
+	if ( $allowed{$imipenem_SIR} or $allowed{$meropenem_SIR} ) {	#Antipseudomonal carbapenems
+		$family_count ++;
+	}
+	if ( $allowed{$colistin_SIR} ) {	#Polymyxins
 		$family_count ++;
 	}
 	return $family_count;
@@ -213,19 +217,22 @@ sub antib_RIfam_formula {
 	) = @_;
 	my $RIfam_count = 0;
 	my %allowed     = ( 'R' => 1, 'I' => 1 );
-	if ( $allowed{$amikacin_SIR} or $allowed{$gentamicin_SIR} ) {
+	if ( $allowed{$amikacin_SIR} or $allowed{$gentamicin_SIR} ) {	#Aminoglycosides
 		$RIfam_count ++;
 	}
-	if ( $allowed{$cefotaxime_SIR} or $allowed{$cefepime_SIR} ) {
+	if ( $allowed{$cefotaxime_SIR} or $allowed{$cefepime_SIR} ) {	#Extended-spectrum cephalosporins
 		$RIfam_count ++;
 	}
-	if ( $allowed{$levofloxacin_SIR} or $allowed{$tetracycline_SIR} ) {
+	if ( $allowed{$levofloxacin_SIR} ) {	#Antipseudomonal fluoroquinolones
 		$RIfam_count ++;
 	}
-	if ( $allowed{$imipenem_SIR} or $allowed{$meropenem_SIR} ) {
+	if ( $allowed{$tetracycline_SIR} ) {	#Tetracyclines
 		$RIfam_count ++;
 	}
-	if ( $allowed{$colistin_SIR} ) {
+	if ( $allowed{$imipenem_SIR} or $allowed{$meropenem_SIR} ) {	#Antipseudomonal carbapenems
+		$RIfam_count ++;
+	}
+	if ( $allowed{$colistin_SIR} ) {	#Polymyxins
 		$RIfam_count ++;
 	}
 	return $RIfam_count;
@@ -277,34 +284,21 @@ sub resistance_profile_formula {
 	
 	if ( $antib_panel_count != 0 ) {
 
-		if ( $RI_count == $antib_panel_count && $S_count == 0 ) {	#PDR: non-susceptible to all antimicrobial agents listed
+		if ( $RI_count == 9 && $S_count == 0 ) {	#PDR: non-susceptible to all antimicrobial agents listed
 			return "PDR";
 		}
-
-		if ( $RI_count == 0 && $S_count == $antib_panel_count ) {	#S: susceptible to all antimicrobial agents listed
+		if ( $RI_count == 0 && $S_count == 9 ) {	#S: susceptible to all antimicrobial agents listed
 			return "sensitive";
 		}
-
+		if ( $RIfam_count < 3 ) {
+			return "not MDR";
+		}
+		if ( $RIfam_count == 3 ) {	#MDR: non-susceptible to >=1 agent in >=3 antimicrobial categories.
+			return "MDR";
+		}
 		if ( $family_count - $RIfam_count <= 2 ) {	#XDR: non-susceptible to >=1 agent in all but <=2 categories
 			return "XDR";
 		}
-		if ( $family_count - $RIfam_count <= 2 ) {
-			return "XDR*";
-		}
-
-		if ( $RIfam_count >= 3 ) {	#MDR: non-susceptible to >=1 agent in >=3 antimicrobial categories.
-			return "MDR";
-		}
-		if ( $RIfam_count >= 3 ) {	
-			return "MDR*";
-		}
-		if ( $RIfam_count < 3 && $RI_count != 0) {
-			return "not MDR";
-		}
-		if ( $RIfam_count < 3 && $RI_count != 0) {
-			return "not MDR*";
-		}
-		
 		else {
 		return "Error: unclassified";
 		}
